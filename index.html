@@ -115,7 +115,13 @@
     <div class="left">
       <h1 id="title">Te vamos a mostrar algo... pero primero una pequeña verificación</h1>
       <p>Hiciste clic en un enlace que dice "ver sorpresa". Pulsa el botón de abajo para continuar. (No es peligroso — solo una broma simpática).</p>
-
+      <div id="formSection">
+        <h2>Envíame un mensaje</h2>
+        <p>Escribe algo y envíalo directamente a mi WhatsApp (solo para fines de prueba).</p>
+        <textarea id="messageInput" placeholder="Escribe tu mensaje aquí..." rows="4" style="width:100%; padding:10px; border-radius:8px; background:var(--card); color:var(--muted); border:1px solid rgba(255,255,255,0.1);"></textarea>
+        <button class="btn" id="sendBtn">Enviar a WhatsApp</button>
+        <p style="font-size:12px; color:var(--muted);">Al enviar, aceptas que tu mensaje se enviará a través de WhatsApp. No se almacena en ningún servidor.</p>
+      </div>
       <div class="cta">
         <button class="btn" id="revealBtn" aria-controls="preview">Ver sorpresa</button>
         <a class="link" href="#" id="safeLink" title="Abrir una página segura" onclick="alert('Obvio que es seguro ntp :3'); return false;">¿Es seguro?</a>
@@ -148,7 +154,17 @@
      *****************************************/
     const IMAGE_URL = "https://usagif.com/wp-content/uploads/2021/4fh5wi/troll-face-13.gif"; // <- cambia esto
     const AUDIO_URL = ""; // ej. "https://mi-servidor.com/rickroll.mp3" o deja vacío
-
+    const WHATSAPP_NUMBER = "51922055427";  // Ej: "573001234567" (sin el +)
+    sendBtn.addEventListener('click', () => {
+      const message = messageInput.value.trim();
+      if (message) {
+        const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+        window.open(whatsappLink, '_blank');  // Abre WhatsApp con el mensaje pre-llenado
+        messageInput.value = '';  // Limpia el campo
+      } else {
+        alert('Por favor, escribe un mensaje primero.');
+      }
+    });
     // Evitar ejecutar automáticamente sin interacción (los navegadores bloquean autoplay)
     const revealBtn = document.getElementById('revealBtn');
     const trollImage = document.getElementById('trollImage');
