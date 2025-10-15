@@ -113,23 +113,18 @@
 <body>
   <div class="card" role="main" aria-labelledby="title">
     <div class="left">
-      <h1 id="title">Te vamos a mostrar algo... pero primero una pequeña verificación</h1>
-      <p>Hiciste clic en un enlace que dice "ver sorpresa". Pulsa el botón de abajo para continuar. (No es peligroso — solo una broma simpática).</p>
-      <div id="formSection">
-        <h2>Envíame un mensaje</h2>
-        <p>Escribe algo y envíalo directamente a mi WhatsApp (solo para fines de prueba).</p>
-        <textarea id="messageInput" placeholder="Escribe tu mensaje aquí..." rows="4" style="width:100%; padding:10px; border-radius:8px; background:var(--card); color:var(--muted); border:1px solid rgba(255,255,255,0.1);"></textarea>
-        <button class="btn" id="sendBtn">Enviar a WhatsApp</button>
-        <p style="font-size:12px; color:var(--muted);">Al enviar, aceptas que tu mensaje se enviará a través de WhatsApp. No se almacena en ningún servidor.</p>
-      </div>
+      <h1 id="title">Bienvenido a la verificacion</h1>
+      <p>Pulsa el botón de abajo para continuar.</p>
+      
       <div class="cta">
-        <button class="btn" id="revealBtn" aria-controls="preview">Ver sorpresa</button>
+        <button class="btn" id="revealBtn" aria-controls="preview">Aceptar verificacion</button>
         <a class="link" href="#" id="safeLink" title="Abrir una página segura" onclick="alert('Obvio que es seguro ntp :3'); return false;">¿Es seguro?</a>
       </div>
-
-      <footer>
-        Consejo: para personalizar la imagen o sonido, edita las variables `IMAGE_URL` y `AUDIO_URL` en el script al final del archivo.
-      </footer>
+      <div id="formSection">
+        <h2>Envia un mensaje</h2>
+        <textarea id="messageInput" placeholder="Escribe tu mensaje aquí..." rows="4" style="width:100%; padding:10px; border-radius:8px; background:var(--card); color:var(--muted); border:1px solid rgba(255,255,255,0.1);"></textarea>
+        <button class="btn" id="sendBtn">Enviar</button>
+      </div>
     </div>
 
     <div class="preview" id="preview">
@@ -138,7 +133,7 @@
       <!-- Elemento que se muestra antes de revelar -->
       <div class="spoof" id="spoof">
         <strong style="font-size:18px">Cargando verificación...</strong>
-        <div class="small">Por favor espera 1–2 segundos y pulsa "Ver sorpresa"</div>
+        <div class="small">Por favor espera 1–2 segundos y pulsa Aceptar</div>
       </div>
 
       <!-- Aquí aparecerá la imagen/gif -->
