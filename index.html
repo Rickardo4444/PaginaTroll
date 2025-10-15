@@ -1,1 +1,266 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>¿Quieres ver una sorpresa?</title>
+  <style>
+    :root{
+      --bg:#0f1724;
+      --card:#0b1220;
+      --accent:#ff6b6b;
+      --muted:#9aa4b2;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+    body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:
+        radial-gradient(1200px 400px at 10% 10%, rgba(255,255,255,0.03), transparent),
+        linear-gradient(180deg,#07101a, #0f1724);
+      color:#e6eef6;
+    }
+    .card{
+      width:min(900px,94%);
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:16px;
+      box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+      padding:32px;
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:24px;
+      align-items:center;
+      backdrop-filter: blur(6px);
+    }
+    .left{
+      padding-right:6px;
+    }
+    h1{ margin:0 0 8px 0; font-size:28px; letter-spacing: -0.4px; }
+    p{ margin:0 0 18px 0; color:var(--muted); line-height:1.5 }
+    .cta{
+      display:flex; gap:12px; align-items:center;
+    }
+    .btn{
+      background:linear-gradient(90deg,#ff7b7b,#ffb26b);
+      color:#07101a;
+      border:none;
+      padding:12px 18px;
+      border-radius:12px;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow: 0 6px 18px rgba(255,123,123,0.18);
+      transition:transform .12s ease;
+    }
+    .btn:active{ transform:translateY(2px) }
+    .link{
+      background:transparent;
+      color:var(--muted);
+      border:1px solid rgba(255,255,255,0.03);
+      padding:8px 12px;
+      border-radius:10px;
+      text-decoration:none;
+      font-size:14px;
+    }
+
+    /* panel derecho: aquí se muestra el contenido "troll" */
+    .preview{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.0));
+      border-radius:12px;
+      padding:12px;
+      text-align:center;
+      min-height:220px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .preview img{
+      max-width:100%;
+      max-height:320px;
+      border-radius:8px;
+      display:block;
+    }
+    .spoof{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:10px;
+      background:linear-gradient(180deg, rgba(2,6,23,0.4), rgba(2,6,23,0.55));
+      color:var(--muted);
+      padding:18px;
+    }
+    .small{ font-size:13px; color:var(--muted) }
+    /* confetti canvas */
+    #confetti-canvas{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+    }
+    footer{ margin-top:14px; font-size:13px; color:var(--muted) }
+
+    /* responsive */
+    @media (max-width:880px){
+      .card{ grid-template-columns: 1fr; }
+      .preview{ order:-1; margin-bottom:8px; min-height:200px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card" role="main" aria-labelledby="title">
+    <div class="left">
+      <h1 id="title">Te vamos a mostrar algo... pero primero una pequeña verificación</h1>
+      <p>Hiciste clic en un enlace que dice "ver sorpresa". Pulsa el botón de abajo para continuar. (No es peligroso — solo una broma simpática).</p>
+
+      <div class="cta">
+        <button class="btn" id="revealBtn" aria-controls="preview">Ver sorpresa</button>
+        <a class="link" href="#" id="safeLink" title="Abrir una página segura" onclick="alert('Este es sólo un ejemplo. Cambia el enlace en el HTML si quieres.'); return false;">¿Es seguro?</a>
+      </div>
+
+      <footer>
+        Consejo: para personalizar la imagen o sonido, edita las variables `IMAGE_URL` y `AUDIO_URL` en el script al final del archivo.
+      </footer>
+    </div>
+
+    <div class="preview" id="preview">
+      <canvas id="confetti-canvas"></canvas>
+
+      <!-- Elemento que se muestra antes de revelar -->
+      <div class="spoof" id="spoof">
+        <strong style="font-size:18px">Cargando verificación...</strong>
+        <div class="small">Por favor espera 1–2 segundos y pulsa "Ver sorpresa"</div>
+      </div>
+
+      <!-- Aquí aparecerá la imagen/gif -->
+      <img id="trollImage" src="" alt="Sorpresa" style="display:none;">
+    </div>
+  </div>
+
+  <script>
+    /*****************************************
+     * PERSONALIZA AQUÍ
+     * - IMAGE_URL: pon la URL directa de tu imagen o gif (ej. https://i.imgur.com/tuimagen.gif)
+     * - AUDIO_URL: (opcional) pon la URL directa de un mp3 si quieres sonidito al revelar
+     *****************************************/
+    const IMAGE_URL = "https://i.imgur.com/REEMPLAZAME.gif"; // <- cambia esto
+    const AUDIO_URL = ""; // ej. "https://mi-servidor.com/rickroll.mp3" o deja vacío
+
+    // Evitar ejecutar automáticamente sin interacción (los navegadores bloquean autoplay)
+    const revealBtn = document.getElementById('revealBtn');
+    const trollImage = document.getElementById('trollImage');
+    const spoof = document.getElementById('spoof');
+
+    // Confetti (simple)
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let confettiPieces = [];
+
+    function resizeCanvas(){
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+
+    function createConfetti(count=80){
+      confettiPieces = [];
+      for(let i=0;i<count;i++){
+        confettiPieces.push({
+          x: rand(0, canvas.width),
+          y: rand(-canvas.height, 0),
+          w: rand(6, 12),
+          h: rand(8, 20),
+          vx: rand(-0.6, 0.6),
+          vy: rand(1, 3),
+          r: rand(0,Math.PI*2),
+          color: `hsl(${Math.floor(rand(0,360))} 80% 60%)`
+        });
+      }
+    }
+
+    function drawConfetti(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      confettiPieces.forEach(p=>{
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.r);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        ctx.restore();
+
+        p.x += p.vx;
+        p.y += p.vy;
+        p.r += 0.05;
+        if(p.y > canvas.height+30){ p.y = -20; p.x = rand(0,canvas.width); }
+      });
+      requestAnimationFrame(drawConfetti);
+    }
+
+    // Sonido (opcional)
+    let audio;
+    if(AUDIO_URL){
+      audio = new Audio(AUDIO_URL);
+      audio.preload = "auto";
+    }
+
+    revealBtn.addEventListener('click', async function(){
+      // pequeña animación visual
+      revealBtn.disabled = true;
+      revealBtn.textContent = "Revelando...";
+      spoof.querySelector('.small').textContent = "Un segundo...";
+
+      // show confetti
+      createConfetti(120);
+      drawConfetti();
+
+      // carga la imagen (mejor que cargue antes de mostrar)
+      trollImage.src = IMAGE_URL;
+      trollImage.onload = () => {
+        spoilerShowImage();
+      };
+      trollImage.onerror = () => {
+        // si falla la URL, mostrar mensaje alternativo
+        spoilerShowFallback();
+      };
+
+      // intenta reproducir audio si hay uno (algunos navegadores requieren interacción, esto es una interacción)
+      if(audio){
+        try { await audio.play(); } catch(e) { /* autoplay bloqueado */ }
+      }
+    });
+
+    function spoilerShowImage(){
+      spoof.style.display = "none";
+      trollImage.style.display = "block";
+      revealBtn.textContent = "¡Listo!";
+      // opcional: si quieres redirigir después de X segundos, descomenta la línea siguiente
+      // setTimeout(()=> location.href = 'https://example.com', 5000);
+    }
+
+    function spoilerShowFallback(){
+      spoof.querySelector('.small').textContent = "No se pudo cargar la imagen. Revisa IMAGE_URL en el código.";
+      revealBtn.textContent = "Reintentar";
+      revealBtn.disabled = false;
+    }
+
+    // Accesibilidad: tecla Enter para activar
+    revealBtn.addEventListener('keyup', (e)=>{ if(e.key === 'Enter') revealBtn.click(); });
+
+    // Evita que la imagen se arrastre/tome focus innecesario
+    trollImage.draggable = false;
+
+    // Si quieres, al cargar puedes cambiar el texto para hacerlo más convincente
+    document.addEventListener('DOMContentLoaded', ()=> {
+      // ejemplo: cambiar texto para hacer la broma más "creíble"
+      // document.querySelector('p').textContent = 'Haga clic en "Ver sorpresa" para recibir su regalo digital.';
+    });
+  </script>
+</body>
+</html>
 
